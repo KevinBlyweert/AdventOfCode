@@ -21,10 +21,9 @@ for (let index = 0; index < global.length; index++) {
     }
     global[index][0].push(global[index][0][0])
     while (global[index].length != 1) {
-        global[index][1].push(global[index][1][global[index][1].length-1] + global[index][0].pop());
+        global[index][1].unshift(global[index][1][0] - global[index][0].shift());
         global[index].shift()
     }
-    sum += global[index][0].pop()
+    sum += global[index][0].shift()
 }
-
 console.log('done',sum);
