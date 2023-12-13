@@ -1,6 +1,6 @@
 const input = require('fs').readFileSync('./input.txt','utf-8').split('\r\n');
 const oldLines = input.map(line=>line.split(''))
-let sum = 0,currentValue ='S',currentX=0,currentY=0,previousDir = undefined;
+let sum = 0,currentValue ='S',currentX=0,currentY=0,previousDir = undefined,vertices=[];
 //previousdir[North = 1,East = 2,South = 3,West = 4]
 
 function goNorth(newX,newY){
@@ -36,6 +36,9 @@ function checkForStartValue(x,y){
 }
 function walk({x,y}){
     // console.log(x,y,currentValue,previousDir);
+    if (['F','J','7','L'].includes(currentValue)) {
+        vertices.push([currentX,currentY])
+    }
     let positions = {}
     // let surroundValues = [lines[x-1][y]??undefined,lines[x][y+1]??undefined,lines[x+1][y]??undefined,lines[x][y-1]??undefined];
     if (currentValue !== 'S'){
@@ -125,6 +128,21 @@ function walk({x,y}){
     }
 }
 
+function getAreaUsingShoelaceFormula() {
+    let area = 0;
+  
+    for (let i = 0; i < vertices.length; i++) {
+      const nextIndex = (i + 1) % vertices.length;
+      const [x, y] = vertices[i];
+      const [nextX, nextY] = vertices[nextIndex];
+      area += x*nextY - y*nextX;
+    }
+  
+    area = Math.abs(area)/2;
+  
+    return area;
+  }
+
 function start(){
     let indexX = 0,indexY = 0;
     lines.forEach(line=>{
@@ -133,7 +151,6 @@ function start(){
     })
     currentY = indexY
     currentValue = checkForStartValue(currentX,currentY);
-    // let positions = {x:currentX,y:currentY}
     while (currentValue !== 'S') {
         walk({x:currentX,y:currentY})
     }
@@ -143,4 +160,6 @@ let newLine = [...Array(oldLines[0].length)].map(elt=>'.')
 oldLines.unshift(newLine);oldLines.push(newLine)
 let lines = oldLines.map(line=>['.',...line,'.'])
 start();
-console.log(sum,sum/2);
+let area = getAreaUsingShoelaceFormula();
+let pointsOfArea = area - sum /2 + 1
+console.log(pointsOfArea);
